@@ -37,5 +37,3 @@ Font: **DS-Digital** (for the authentic railway display)
 
 This **README.md** file provides a **clear project overview**, instructions, and future upgrade ideas! 🚆🔥  
 
-Would you like any **modifications or additions** before finalizing? ⏰✨  
-Let me know how it looks! 🚀🚆
