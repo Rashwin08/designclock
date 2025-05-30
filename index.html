@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Railways Digital Clock</title>
+    <style>
+        @font-face {
+            font-family: 'DS-Digital';
+            src: url('./DS-Digital.ttf') format('truetype');
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #0B3D91, #000000);
+            font-family: 'DS-Digital', Arial, sans-serif;
+            transition: background 1s ease-in-out;
+        }
+        .clock-container {
+            position: relative;
+            text-align: center;
+            padding: 50px;
+            border-radius: 30px;
+            width: 900px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(6, 32, 109, 0.3);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px red, 0 0 100px rgba(0, 0, 255, 0.8);
+        }
+        .clock {
+            font-size: 14rem;
+            width: 100%;
+            text-align: center;
+            color: #FFFFFF;
+            transition: color 1s ease-in-out;
+        }
+        .date {
+            font-size: 3rem;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: #FFFFFF;
+        }
+        .day {
+            font-size: 2.5rem;
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            color: #FFFFFF;
+        }
+        .temperature {
+            font-size: 2rem;
+            position: absolute;
+            bottom: 80px;
+            right: 100px;
+            font-weight: bold;
+            transition: color 0.5s ease-in-out;
+            color: #FFFFFF;
+        }
+        .city {
+            font-size: 1.5rem;
+            position: absolute;
+            bottom: 40px;
+            right: 100px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="clock" id="clock"></div>
+        <div class="date" id="date"></div>
+        <div class="day" id="day"></div>
+        <div class="temperature" id="temperature">...</div>
+        <div class="city" id="city">Sivakasi</div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+
+            document.getElementById("clock").innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById("date").innerText = now.toLocaleDateString();
+            document.getElementById("day").innerText = now.toLocaleString('en-us', { weekday: 'long' });
+
+            updateBackground(hours);
+        }
+
+        function updateBackground(hours) {
+            document.body.style.background = hours >= 6 && hours < 18
+                ? "linear-gradient(to bottom, #87CEEB, #000000)"
+                : "linear-gradient(to bottom, #0B3D91, #000000)";
+        }
+
+        async function fetchTemperature() {
+            try {
+                let response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=9.45&longitude=77.80&current_weather=true");
+                let data = await response.json();
+                let temp = data.current_weather.temperature;
+
+                let tempElement = document.getElementById("temperature");
+                tempElement.innerText = `${temp}°C`;
+
+                tempElement.style.color = temp < 20 ? "#00A2FF" : temp <= 30 ? "#FFD700" : "#FF3E3E";
+            } catch (error) {
+                document.getElementById("temperature").innerText = "N/A";
+            }
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+        fetchTemperature();
+    </script>
+</body>
+</html>
